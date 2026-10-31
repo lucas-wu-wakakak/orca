@@ -4,6 +4,7 @@ import {
   PLUGIN_ICON_SVG_MAX_BYTES,
   isPlausiblePluginIconSvg,
   parsePluginIconThemeArtifact,
+  pluginIconThemeIconRefs,
   type PluginIconThemeArtifact,
   type PluginIconThemeMetadata,
   type PluginIconThemeRegistration
@@ -94,13 +95,7 @@ export class PluginIconThemeRegistry {
 
 async function materialize(descriptor: IconThemeDescriptor): Promise<PluginIconThemeRegistration> {
   const { artifact } = descriptor
-  const paths = [
-    ...new Set([
-      ...Object.values(artifact.icons),
-      ...Object.values(artifact.fileNames),
-      ...Object.values(artifact.fileExtensions)
-    ])
-  ]
+  const paths = [...new Set(pluginIconThemeIconRefs(artifact))]
   const svgs: string[] = []
   let totalBytes = 0
   for (const path of paths) {
@@ -128,6 +123,8 @@ async function materialize(descriptor: IconThemeDescriptor): Promise<PluginIconT
     svgs,
     icons: indexOf(artifact.icons),
     fileNames: indexOf(artifact.fileNames),
-    fileExtensions: indexOf(artifact.fileExtensions)
+    fileExtensions: indexOf(artifact.fileExtensions),
+    folderNames: indexOf(artifact.folderNames),
+    folderNamesExpanded: indexOf(artifact.folderNamesExpanded)
   }
 }
